@@ -1,0 +1,56 @@
+---
+services:
+
+  runner:
+    image: runner-gh-actions
+
+    build:
+      context: .
+      dockerfile: Dockerfile
+      args:
+        RUNNER_VERSION: 2.311.0
+        DOCKERGID: 995 # This argument is for binds group ownership between guest and host
+
+    env_file: .env
+
+    volumes: 
+      - runner_tools:/home/runner/actions-runner/_work/_tool
+      - runner_cache:/home/runner/.cache
+      - type: bind
+        source: /var/run/docker.sock
+        target: /var/run/docker.sock
+
+
+    deploy:
+      mode: replicated
+      replicas: 1
+
+      resources:
+        limits: # Maximum resources
+          # cpus: "2.0" # 1.5 cores
+          memory: 4096MB
+        reservations: # Minimum resources
+          # cpus: "0.2"
+          memory: 128MB
+
+      restart_policy:
+        condition: on-failure
+        delay: 5s
+        max_attempts: 3
+        window: 60s
+
+volumes:
+
+  runner_tools: # Cache for tools (SetUp step)
+    driver: local
+    driver_opts:
+      type: none
+      o: bind
+      device: ./runner_tools
+
+  runner_cache: # General purpose cache
+    driver: local
+    driver_opts:
+      type: none
+      o: bind
+      device: ./runner_cache
