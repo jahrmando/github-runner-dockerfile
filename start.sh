@@ -1,16 +1,16 @@
 #!/bin/bash
 
-REPOSITORY=$REPO
+ORGANIZATION=$ORG
 ACCESS_TOKEN=$TOKEN
+RUNNER_GROUP=$GROUP
 
-echo "REPO ${REPOSITORY}"
-echo "ACCESS_TOKEN ${ACCESS_TOKEN}"
+echo "ORGANIZATION ${ORGANIZATION}"
 
-REG_TOKEN=$(curl -X POST -H "Authorization: token ${ACCESS_TOKEN}" -H "Accept: application/vnd.github+json" https://api.github.com/repos/${REPOSITORY}/actions/runners/registration-token | jq .token --raw-output)
+REG_TOKEN=$(curl -X POST -H "Authorization: token ${ACCESS_TOKEN}" -H "Accept: application/vnd.github+json" https://api.github.com/orgs/${ORGANIZATION}/actions/runners/registration-token | jq .token --raw-output)
 
-cd /home/docker/actions-runner
+cd /home/runner/actions-runner
 
-./config.sh --url https://github.com/${REPOSITORY} --token ${REG_TOKEN}
+./config.sh --url https://github.com/${ORGANIZATION} --token ${REG_TOKEN} --runnergroup ${RUNNER_GROUP}
 
 cleanup() {
     echo "Removing runner..."
