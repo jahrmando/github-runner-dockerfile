@@ -40,17 +40,5 @@ services:
         window: 60s
 
 volumes:
-
-  runner_tools: # Cache for tools (SetUp step)
-    driver: local
-    driver_opts:
-      type: none
-      o: bind
-      device: ./runner_tools
-
-  runner_cache: # General purpose cache
-    driver: local
-    driver_opts:
-      type: none
-      o: bind
-      device: ./runner_cache
+  runner_tools: {} # Cache for tools (SetUp step)
+  runner_cache: {} # General purpose cache
